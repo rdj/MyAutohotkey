@@ -41,22 +41,22 @@ KeyLoggerMode := 0
 #MenuMaskKey vkFFsc001 ; Default is Ctrl, which Emacs doesn't like
 
 #NoEnv ; Don't create AHK vars for all env vars
+EnvGet AppData, APPDATA
 ;ComSpec := A_ComSpec
 EnvGet ProgramData, ProgramData
 EnvGet ProgramFiles32, ProgramFiles(x86)
 EnvGet UserProfile, UserProfile
 
-Chrome := "ahk_exe chrome.exe"
-Emacs := "ahk_exe emacs.exe"
-FFXIV := "ahk_exe ffxiv_dx11.exe"
+FFXIV          := "ahk_exe ffxiv_dx11.exe"
 FFXIV_Launcher := "ahk_exe ffxivlauncher.exe"
-Fortnite := "ahk_exe FortniteClient-Win64-Shipping.exe"
-Overwatch := "ahk_exe Overwatch.exe"
-Pubg := "ahk_exe TslGame.exe"
-Rainbow6 := "ahk_exe RainbowSix.exe"
-Witcher3 := "ahk_exe witcher3.exe"
+Fortnite       := "ahk_exe FortniteClient-Win64-Shipping.exe"
+Overwatch      := "ahk_exe Overwatch.exe"
+Pubg           := "ahk_exe TslGame.exe"
+Rainbow6       := "ahk_exe RainbowSix.exe"
+Witcher3       := "ahk_exe witcher3.exe"
 
 ffKeyboardMode := new FFKeyboardMode()
+progs := new RdjProgs()
 
 #Include FFPassword.ahk
 
@@ -70,6 +70,18 @@ ffKeyboardMode := new FFKeyboardMode()
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Return
+
+
+;; When AHK intercepts a Win+? hotkey, it sends the value from
+;; #MenuMaskKey (default Ctrl) to prevent the start menu from opening.
+;; We can do the same thing in just the LWin/RWin handlers to prevent
+;; the start menu from coming up when a particular program is active.
+;; Would be better to share the MenuMaskKey instead of duplicating it,
+;; but there doesn't seem to be a way to access to the value, and the
+;; #MenuMaskKey directive can't reference variables or functions.
+RdjDisableStartMenu() {
+    Send {Blind}{vkFFsc001}
+}
 
 RdjModeWindow( title := "" ) {
   if ( title != "" ) {
@@ -88,23 +100,101 @@ RdjIndexOf( ByRef a, needle ) {
     }
 }
 
-;; When AHK intercepts a Win+? hotkey, it sends the value from
-;; #MenuMaskKey (default Ctrl) to prevent the start menu from opening.
-;; We can do the same thing in just the LWin/RWin handlers to prevent
-;; the start menu from coming up when a particular program is active.
-;; Would be better to share the MenuMaskKey instead of duplicating it,
-;; but there doesn't seem to be a way to access to the value, and the
-;; #MenuMaskKey directive can't reference variables or functions.
-RdjDisableStartMenu() {
-    Send {Blind}{vkFFsc001}
-}
+class RdjProgs {
+    static BLIZZARD    := "blizzard"
+    static CHROME      := "chrome"
+    static DISCORD     := "discord"
+    static DROPBOX     := "dropbox"
+    static EMACS       := "emacs"
+    static GIT_SHELL   := "git_shell"
+    static ONEPASSWORD := "1password"
+    static STEAM       := "steam"
+    static TWITCH      := "twitch"
+    ALL := {}
 
-;; Use WinKill A instead, I think
-; RdjKillActiveProgram() {
-;     local proc
-;     WinGet proc, ProcessName, A
-;     Run taskkill /f /im "%proc%",,hide
-; }
+    ;; AHK doesn't let you split long lines so it seems much saner to
+    ;; set up the specs in the ctor
+    __New() {
+        this.ALL[this.BLIZZARD] := { title: "Blizzard Battle.net", exe: "Battle.net.exe", runTarget: "%ProgramFiles32%\Battle.net\Battle.net Launcher.exe", x: -1080, y: 743, w: 1080, h: 637 }
+        this.ALL[this.BLIZZARD . "_friends"] := { title: "Friends", exe: "Battle.net.exe", x: -320, y: 743, w: 320, h: 637 }
+        this.ALL[this.CHROME] := { exe: "chrome.exe", path: "%ProgramFiles32%\Google\Chrome\Application\", x: -1088, y: 0, w: 1095, h: 751 } ; Chrome has like a phantom window that it insets the client window in
+        this.ALL[this.DROPBOX] := { title: "Dropbox", exe: "Explorer.EXE", runTarget: "%UserProfile%\Dropbox" }
+        this.ALL[this.DISCORD] := { exe: "Discord.exe", runTarget: "C:\Users\ryan\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Hammer & Chisel, Inc\Discord.lnk", x: -1080, y: 1380, w: 1080, h: 500 }
+        this.ALL[this.EMACS] := { exe: "emacs.exe", runTarget: "%ProgramData%\chocolatey\bin\runemacs.exe", flags: "hide" }
+        this.ALL[this.GIT_SHELL] := { exe: "bash.exe", runTarget: "C:\Users\ryan\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\GitHub, Inc\Git Shell.lnk" }
+        this.ALL[this.ONEPASSWORD] := { exe: "1Password.exe", path: "%ProgramFiles32%\1Password 4\" }
+        this.ALL[this.STEAM] := { title: "Friends", exe: "Steam.exe", path: "%ProgramFiles32%\Steam\", x: -1080, y: 743, w: 320, h: 637 }
+        this.ALL[this.TWITCH] := { exe: "TwitchUI.exe", runTarget: "%AppData%\Twitch\Bin\Twitch.exe", x: -1080, y: 743, w: 1080, h: 637 }
+    }
+
+    AdminCmd() {
+        local hwnd
+        if ( hwnd := WinExist( "Administrator ahk_exe cmd.exe" ) ) {
+            WinActivate ahk_id %hwnd%
+        }
+        else {
+            Run *RunAs %A_ComSpec%
+        }
+    }
+
+    Cmd() {
+        local hwnd
+        if ( hwnd := WinExist( "ahk_exe cmd.exe", , "Administrator" ) ) {
+            WinActivate ahk_id %hwnd%
+        }
+        else {
+            Run %A_ComSpec%, %UserProfile%
+        }
+    }
+
+    IsActive( name ) {
+        return WinActive( this.WinTarget( this.ALL[name] ) )
+    }
+
+    RepositionAll() {
+        local foo
+        for name, spec in this.ALL {
+            this.Reposition( spec )
+        }
+    }
+
+    Reposition( spec ) {
+        local foo
+        if ( "" == spec.x ) {
+            return
+        }
+        WinMove % this.WinTarget( spec ), , spec.x, spec.y, spec.w, spec.h
+    }
+
+    RunOrActivate( name ) {
+        local spec := this.ALL[name]
+        if ( local hwnd := WinExist( this.WinTarget( spec ) ) ) {
+            WinActivate ahk_id %hwnd%
+        }
+        else {
+            local flags := spec.flags
+            Run % this.RunTarget( spec ), %UserProfile%, %flags%
+        }
+    }
+
+    RunTarget( spec ) {
+        local runTarget := spec["runTarget"]
+        if ( "" == runTarget ) {
+            runTarget := spec["path"] . spec["exe"]
+        }
+        Transform runTarget, DeRef, %runTarget%
+        return runTarget
+    }
+
+    WinTarget( spec ) {
+        local target := ""
+        if ( "" != spec["title"] ) {
+            target := spec["title"] . " "
+        }
+        target := target . "ahk_exe " . spec["exe"]
+        return target
+    }
+}
 
 class FFKeyboardMode {
     static MODE_DEFAULT := ""
@@ -156,7 +246,6 @@ class FFKeyboardMode {
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 #If
-  ;%LeftControlVirtualKey%::LCtrl
   vkFF::LCtrl
 
   #F8:: Send {Media_Play_Pause}
@@ -164,13 +253,19 @@ class FFKeyboardMode {
   #F11:: Send {Volume_Down}
   #F12:: Send {Volume_Up}
 
-  #^1:: Run %ProgramFiles32%\1Password 4\1Password.exe
-  #^c:: Run %ComSpec%,%UserProfile%
-  #^d:: Run %UserProfile%\Dropbox
-  #^e:: Run %ProgramData%\chocolatey\bin\runemacs.exe,,hide
-  #^p:: Run putty
-  #^u:: Run %ProgramFiles32%\Google\Chrome\Application\chrome.exe
-  #+c:: Run *RunAs %A_ComSpec%
+  #^1:: progs.RunOrActivate( progs.ONEPASSWORD )
+  #^c:: progs.Cmd()
+  #+c:: progs.AdminCmd()
+  #^d:: progs.RunOrActivate( progs.DROPBOX )
+  #^e:: progs.RunOrActivate( progs.EMACS )
+  #^r:: progs.RepositionAll()
+  #^s:: progs.RunOrActivate( progs.DISCORD )
+  #^t:: progs.RunOrActivate( progs.STEAM )
+  #^u:: progs.RunOrActivate( progs.CHROME )
+  #^w:: progs.RunOrActivate( progs.TWITCH )
+  #^x:: progs.RunOrActivate( progs.GIT_SHELL )
+  #^z:: progs.RunOrActivate( progs.BLIZZARD )
+
   #+e:: Edit
   #+r:: Reload
 #If
@@ -185,7 +280,7 @@ class FFKeyboardMode {
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-#If WinActive( Chrome )
+#If progs.IsActive( progs.CHROME )
   ;; Disable back/forward mouse buttons in chrome
   XButton1:: Return
   XButton2:: Return
@@ -227,12 +322,12 @@ class FFKeyboardMode {
   ~RWin:: RdjDisableStartMenu()
 
   ;; Physical LCtrl becomes Ctrl+Shift+Alt. CapsLock is still LCtrl.
-  VKFF::
-  *VKFF::
+  vkFF::
+  *vkFF::
     SetKeyDelay -1
     Send {Blind}{Ctrl DownTemp}{Shift DownTemp}{Alt DownTemp}
     Return
-  *VKFF up::
+  *vkFF up::
     SetKeyDelay -1
     Send {Blind}{Ctrl Up}{Shift Up}{Alt Up}
     Return
