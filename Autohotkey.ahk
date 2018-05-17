@@ -284,7 +284,7 @@ class FFKeyboardMode {
   ;; Disable back/forward mouse buttons in chrome
   XButton1:: Return
   XButton2:: Return
-  #If
+#If
 
 ;; Common Games
 #If WinActive( Pubg )
