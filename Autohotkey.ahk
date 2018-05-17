@@ -200,7 +200,7 @@ class FFKeyboardMode {
     static MODE_DEFAULT := ""
     static MODE_NUMPAD := "NUMPAD"
     static MODE_FISHING := "FISHING"
-    static ALL_MODES = [ FFKeyboardMode.MODE_DEFAULT, FFKeyboardMode.MODE_NUMPAD, FFKeyboardMode.MODE_FISHING ]
+    static ALL_MODES := [ FFKeyboardMode.MODE_DEFAULT, FFKeyboardMode.MODE_NUMPAD, FFKeyboardMode.MODE_FISHING ]
 
     _currentMode := FFKeyboardMode.MODE_DEFAULT
     CurrentMode[] {
@@ -229,7 +229,7 @@ class FFKeyboardMode {
 
     Cycle() {
         local currentModeIndex := RdjIndexOf( FFKeyboardMode.ALL_MODES, this._currentMode )
-        local nextIndex = Mod( currentModeIndex, FFKeyboardMode.ALL_MODES.Length() ) + 1
+        local nextIndex := Mod( currentModeIndex, FFKeyboardMode.ALL_MODES.Length() ) + 1
         this._currentMode := FFKeyboardMode.ALL_MODES[nextIndex]
         if ( this.IsDefault ) {
             RdjModeWindow()
