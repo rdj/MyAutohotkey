@@ -312,7 +312,7 @@ class FFKeyboardMode {
 #If WinActive( FFXIV_Launcher )
   `::
     SetKeyDelay 0
-    Send % FFPassword()
+    SendRaw % FFPassword()
     Send {Tab}
     Return
 #If
