@@ -40,11 +40,14 @@ KeyLoggerMode := 0
 
 #MenuMaskKey vkFFsc001 ; Default is Ctrl, which Emacs doesn't like
 
+SetTitleMatchMode RegEx
+
 #NoEnv ; Don't create AHK vars for all env vars
 EnvGet AppData, APPDATA
 ;ComSpec := A_ComSpec
 EnvGet ProgramData, ProgramData
 EnvGet ProgramFiles32, ProgramFiles(x86)
+EnvGet SystemRoot, SystemRoot
 EnvGet UserProfile, UserProfile
 
 FFXIV          := "ahk_exe ffxiv_dx11.exe"
@@ -101,23 +104,28 @@ RdjIndexOf( ByRef a, needle ) {
 }
 
 class RdjProgs {
-    static BLIZZARD    := "blizzard"
-    static CHROME      := "chrome"
-    static DISCORD     := "discord"
-    static DROPBOX     := "dropbox"
-    static EMACS       := "emacs"
-    static GIT_SHELL   := "git_shell"
-    static ONEPASSWORD := "1password"
-    static STEAM       := "steam"
-    static TWITCH      := "twitch"
+    static BLIZZARD     := "blizzard"
+    static CHROME       := "chrome"
+    static CHROME_FFXIV := "chrome_ffxiv"
+    static CMD          := "cmd"
+    static DISCORD      := "discord"
+    static DROPBOX      := "dropbox"
+    static EMACS        := "emacs"
+    static GIT_SHELL    := "git_shell"
+    static ONEPASSWORD  := "1password"
+    static STEAM        := "steam"
+    static TWITCH       := "twitch"
     ALL := {}
 
     ;; AHK doesn't let you split long lines so it seems much saner to
     ;; set up the specs in the ctor
     __New() {
-        this.ALL[this.BLIZZARD] := { title: "Blizzard Battle.net", exe: "Battle.net.exe", runTarget: "%ProgramFiles32%\Battle.net\Battle.net Launcher.exe", x: -1080, y: 743, w: 1080, h: 637 }
+        this.ALL[this.BLIZZARD] := { title: "Blizzard Battle[.]net", exe: "Battle.net.exe", runTarget: "%ProgramFiles32%\Battle.net\Battle.net Launcher.exe", x: -1080, y: 743, w: 1080, h: 637 }
         this.ALL[this.BLIZZARD . "_friends"] := { title: "Friends", exe: "Battle.net.exe", x: -320, y: 743, w: 320, h: 637 }
-        this.ALL[this.CHROME] := { exe: "chrome.exe", path: "%ProgramFiles32%\Google\Chrome\Application\", x: -1088, y: 0, w: 1095, h: 751 } ; Chrome has like a phantom window that it insets the client window in
+        this.ALL[this.CHROME] := { title: "^(?!FFXIV Crafting Optimizer)", exe: "chrome.exe", path: "%ProgramFiles32%\Google\Chrome\Application\", x: -1088, y: 0, w: 1095, h: 751 } ; Chrome has like a phantom window that it insets the client window in
+        this.ALL[this.CHROME_FFFXIV] := { title: "FFXIV Crafting Optimizer", exe: "chrome.exe", x: -1088, y: 743, w: 1095, h: 1145 }
+        this.ALL[this.CMD] := { title: "^(?!Administrator)", exe:"cmd.exe", path: "%SystemRoot%\system32\" }
+        this.ALL[this.CMD_ADMIN] := { title: "Administrator", exe:"cmd.exe", path: "*RunAs %SystemRoot%\system32\" }
         this.ALL[this.DROPBOX] := { title: "Dropbox", exe: "Explorer.EXE", runTarget: "%UserProfile%\Dropbox" }
         this.ALL[this.DISCORD] := { exe: "Discord.exe", runTarget: "C:\Users\ryan\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Hammer & Chisel, Inc\Discord.lnk", x: -1080, y: 1380, w: 1080, h: 500 }
         this.ALL[this.EMACS] := { exe: "emacs.exe", runTarget: "%ProgramData%\chocolatey\bin\runemacs.exe", flags: "hide" }
@@ -125,26 +133,6 @@ class RdjProgs {
         this.ALL[this.ONEPASSWORD] := { exe: "1Password.exe", path: "%ProgramFiles32%\1Password 4\" }
         this.ALL[this.STEAM] := { title: "Friends", exe: "Steam.exe", path: "%ProgramFiles32%\Steam\", x: -1080, y: 743, w: 320, h: 637 }
         this.ALL[this.TWITCH] := { exe: "TwitchUI.exe", runTarget: "%AppData%\Twitch\Bin\Twitch.exe", x: -1080, y: 743, w: 1080, h: 637 }
-    }
-
-    AdminCmd() {
-        local hwnd
-        if ( hwnd := WinExist( "Administrator ahk_exe cmd.exe" ) ) {
-            WinActivate ahk_id %hwnd%
-        }
-        else {
-            Run *RunAs %A_ComSpec%
-        }
-    }
-
-    Cmd() {
-        local hwnd
-        if ( hwnd := WinExist( "ahk_exe cmd.exe", , "Administrator" ) ) {
-            WinActivate ahk_id %hwnd%
-        }
-        else {
-            Run %A_ComSpec%, %UserProfile%
-        }
     }
 
     IsActive( name ) {
@@ -254,10 +242,11 @@ class FFKeyboardMode {
   #F12:: Send {Volume_Up}
 
   #^1:: progs.RunOrActivate( progs.ONEPASSWORD )
-  #^c:: progs.Cmd()
-  #+c:: progs.AdminCmd()
+  #^c:: progs.RunOrActivate( progs.CMD )
+  #+c:: progs.RunOrActivate( progs.CMD_ADMIN )
   #^d:: progs.RunOrActivate( progs.DROPBOX )
   #^e:: progs.RunOrActivate( progs.EMACS )
+  #^f:: progs.RunOrActivate( progs.CHROME_FFFXIV )
   #^r:: progs.RepositionAll()
   #^s:: progs.RunOrActivate( progs.DISCORD )
   #^t:: progs.RunOrActivate( progs.STEAM )
