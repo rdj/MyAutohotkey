@@ -104,26 +104,28 @@ RdjIndexOf( ByRef a, needle ) {
 }
 
 class RdjProgs {
-    static BLIZZARD     := "blizzard"
-    static CHROME       := "chrome"
-    static CHROME_FFXIV := "chrome_ffxiv"
-    static CMD          := "cmd"
-    static DISCORD      := "discord"
-    static DROPBOX      := "dropbox"
-    static EMACS        := "emacs"
-    static GIT_SHELL    := "git_shell"
-    static ONEPASSWORD  := "1password"
-    static STEAM        := "steam"
-    static TWITCH       := "twitch"
+    BLIZZARD         := "blizzard"
+    BLIZZARD_FRIENDS := "blizzard_friends"
+    CHROME           := "chrome"
+    CHROME_FFXIV     := "chrome_ffxiv"
+    CMD              := "cmd"
+    CMD_ADMIN        := "cmd_admin"
+    DISCORD          := "discord"
+    DROPBOX          := "dropbox"
+    EMACS            := "emacs"
+    GIT_SHELL        := "git_shell"
+    ONEPASSWORD      := "1password"
+    STEAM            := "steam"
+    TWITCH           := "twitch"
     ALL := {}
 
-    ;; AHK doesn't let you split long lines so it seems much saner to
-    ;; set up the specs in the ctor
+    ;; This is a mess, but AHK's version of line continutation is
+    ;; pretty funky and ill-suited to formatting this reasonably
     __New() {
         this.ALL[this.BLIZZARD] := { title: "Blizzard Battle[.]net", exe: "Battle.net.exe", runTarget: "%ProgramFiles32%\Battle.net\Battle.net Launcher.exe", x: -1080, y: 743, w: 1080, h: 637 }
-        this.ALL[this.BLIZZARD . "_friends"] := { title: "Friends", exe: "Battle.net.exe", x: -320, y: 743, w: 320, h: 637 }
+        this.ALL[this.BLIZZARD_FRIENDS] := { title: "Friends", exe: "Battle.net.exe", x: -320, y: 743, w: 320, h: 637 }
         this.ALL[this.CHROME] := { title: "^(?!FFXIV Crafting Optimizer)", exe: "chrome.exe", path: "%ProgramFiles32%\Google\Chrome\Application\", x: -1088, y: 0, w: 1095, h: 751 } ; Chrome has like a phantom window that it insets the client window in
-        this.ALL[this.CHROME_FFFXIV] := { title: "FFXIV Crafting Optimizer", exe: "chrome.exe", x: -1088, y: 743, w: 1095, h: 1145 }
+        this.ALL[this.CHROME_FFXIV] := { title: "FFXIV Crafting Optimizer", exe: "chrome.exe", x: -1088, y: 743, w: 1095, h: 1145 }
         this.ALL[this.CMD] := { title: "^(?!Administrator)", exe:"cmd.exe", path: "%SystemRoot%\system32\" }
         this.ALL[this.CMD_ADMIN] := { title: "Administrator", exe:"cmd.exe", path: "*RunAs %SystemRoot%\system32\" }
         this.ALL[this.DROPBOX] := { title: "Dropbox", exe: "Explorer.EXE", runTarget: "%UserProfile%\Dropbox" }
@@ -156,6 +158,9 @@ class RdjProgs {
 
     RunOrActivate( name ) {
         local spec := this.ALL[name]
+        if ( "" == spec ) {
+            return
+        }
         if ( local hwnd := WinExist( this.WinTarget( spec ) ) ) {
             WinActivate ahk_id %hwnd%
         }
@@ -181,6 +186,13 @@ class RdjProgs {
         }
         target := target . "ahk_exe " . spec["exe"]
         return target
+    }
+
+    ; Default behavior when accessing a non-existent property on an
+    ; object is just to return blank, which defeats the whole purpose
+    ; of using pseudo-constants for the program keys
+    __Get( aName ) {
+        MsgBox Non-existant property: %aName%
     }
 }
 
@@ -246,11 +258,11 @@ class FFKeyboardMode {
   #+c:: progs.RunOrActivate( progs.CMD_ADMIN )
   #^d:: progs.RunOrActivate( progs.DROPBOX )
   #^e:: progs.RunOrActivate( progs.EMACS )
-  #^f:: progs.RunOrActivate( progs.CHROME_FFFXIV )
   #^r:: progs.RepositionAll()
   #^s:: progs.RunOrActivate( progs.DISCORD )
   #^t:: progs.RunOrActivate( progs.STEAM )
   #^u:: progs.RunOrActivate( progs.CHROME )
+  #^v:: progs.RunOrActivate( progs.CHROME_FFXIV )
   #^w:: progs.RunOrActivate( progs.TWITCH )
   #^x:: progs.RunOrActivate( progs.GIT_SHELL )
   #^z:: progs.RunOrActivate( progs.BLIZZARD )
