@@ -119,13 +119,18 @@ class RdjProgs {
     TWITCH           := "twitch"
     ALL := {}
 
+    ; Chrome's window is inset compared to its window system position
+    CHROME_OFFSET_X := -8
+    CHROME_OFFSET_W := 15
+    CHROME_OFFSET_H := 8
+
     ;; This is a mess, but AHK's version of line continutation is
     ;; pretty funky and ill-suited to formatting this reasonably
     __New() {
         this.ALL[this.BLIZZARD] := { title: "Blizzard Battle[.]net", exe: "Battle.net.exe", runTarget: "%ProgramFiles32%\Battle.net\Battle.net Launcher.exe", x: -1080, y: 743, w: 1080, h: 637 }
         this.ALL[this.BLIZZARD_FRIENDS] := { title: "Friends", exe: "Battle.net.exe", x: -320, y: 743, w: 320, h: 637 }
-        this.ALL[this.CHROME] := { title: "^(?!FFXIV Crafting Optimizer)", exe: "chrome.exe", path: "%ProgramFiles32%\Google\Chrome\Application\", x: -1088, y: 0, w: 1095, h: 751 } ; Chrome has like a phantom window that it insets the client window in
-        this.ALL[this.CHROME_FFXIV] := { title: "FFXIV Crafting Optimizer", exe: "chrome.exe", x: -1088, y: 743, w: 1095, h: 1145 }
+        this.ALL[this.CHROME] := { title: "^(?!FFXIV Crafting Optimizer)", exe: "chrome.exe", path: "%ProgramFiles32%\Google\Chrome\Application\", x: ( -1080 + this.CHROME_OFFSET_X ), y: 0, w: ( 1080 + this.CHROME_OFFSET_W ), h: ( 743 + this.CHROME_OFFSET_H ) } ; Chrome has like a phantom window that it insets the client window in
+        this.ALL[this.CHROME_FFXIV] := { title: "FFXIV Crafting Optimizer", exe: "chrome.exe", x: ( -1080 + this.CHROME_OFFSET_X ), y: 743, w: ( 1080 + this.CHROME_OFFSET_W ), h: ( 1137 + this.CHROME_OFFSET_H ) }
         this.ALL[this.CMD] := { title: "^(?!Administrator)", exe:"cmd.exe", path: "%SystemRoot%\system32\" }
         this.ALL[this.CMD_ADMIN] := { title: "Administrator", exe:"cmd.exe", path: "*RunAs %SystemRoot%\system32\" }
         this.ALL[this.DROPBOX] := { title: "Dropbox", exe: "Explorer.EXE", runTarget: "%UserProfile%\Dropbox" }
