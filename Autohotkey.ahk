@@ -290,6 +290,10 @@ class FFKeyboardMode {
   ;; Disable back/forward mouse buttons in chrome
   XButton1:: Return
   XButton2:: Return
+
+  ;; Mac-style keybinds for cycling through browser tabs
+  !+[:: Send +^{Tab}
+  !+]:: Send ^{Tab}
 #If
 
 ;; Common Games
