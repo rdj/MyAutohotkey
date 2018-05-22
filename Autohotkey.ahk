@@ -263,11 +263,11 @@ class FFKeyboardMode {
   #+c:: progs.RunOrActivate( progs.CMD_ADMIN )
   #^d:: progs.RunOrActivate( progs.DROPBOX )
   #^e:: progs.RunOrActivate( progs.EMACS )
+  #+f:: progs.RunOrActivate( progs.CHROME_FFXIV )
   #^r:: progs.RepositionAll()
   #^s:: progs.RunOrActivate( progs.DISCORD )
   #^t:: progs.RunOrActivate( progs.STEAM )
   #^u:: progs.RunOrActivate( progs.CHROME )
-  #^v:: progs.RunOrActivate( progs.CHROME_FFXIV )
   #^w:: progs.RunOrActivate( progs.TWITCH )
   #^x:: progs.RunOrActivate( progs.GIT_SHELL )
   #^z:: progs.RunOrActivate( progs.BLIZZARD )
@@ -286,7 +286,7 @@ class FFKeyboardMode {
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-#If progs.IsActive( progs.CHROME )
+#If progs.IsActive( progs.CHROME ) || progs.IsActive( progs.CHROME_FFXIV )
   ;; Disable back/forward mouse buttons in chrome
   XButton1:: Return
   XButton2:: Return
