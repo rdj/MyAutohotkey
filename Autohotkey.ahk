@@ -314,7 +314,7 @@ class FFKeyboardMode {
   *Up:: Send {Media_Next}
   
   #^k:: WinKill A
-  #If
+#If
 
 #If WinActive( BlackOps4 )
   ;; Physical LCtrl becomes CapsLock. CapsLock is still LCtrl.
