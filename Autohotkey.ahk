@@ -119,7 +119,6 @@ class RdjProgs {
     ONEPASSWORD      := "1password"
     STEAM            := "steam"
     TWITCH           := "twitch"
-    XIV_HUNT         := "xiv_hunt"
     ALL := {}
 
     ; Chrome's window is inset compared to its window system position
@@ -144,7 +143,6 @@ class RdjProgs {
         this.ALL[this.ONEPASSWORD] := { exe: "1Password.exe", path: "%ProgramFiles32%\1Password 4\" }
         this.ALL[this.STEAM] := { title: "Friends", exe: "steamwebhelper.exe", runTarget: "%ProgramFiles32%\Steam\Steam.exe", x: -1080, y: 743, w: 320, h: 637 }
         this.ALL[this.TWITCH] := { exe: "TwitchUI.exe", runTarget: "%AppData%\Twitch\Bin\Twitch.exe", x: -1080, y: 743, w: 1080, h: 637 }
-        this.ALL[this.XIV_HUNT] := { exe: "XIV-Hunt.exe", x: -608, y: 1380, w: 600, h: 508 }
     }
 
     IsActive( name ) {
