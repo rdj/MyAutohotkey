@@ -50,6 +50,7 @@ EnvGet ProgramFiles32, ProgramFiles(x86)
 EnvGet SystemRoot, SystemRoot
 EnvGet UserProfile, UserProfile
 
+BlackOps4      := "ahk_exe BlackOps4.exe"
 FFXIV          := "ahk_exe ffxiv_dx11.exe"
 FFXIV_Launcher := "ahk_exe ffxivlauncher.exe"
 Fortnite       := "ahk_exe FortniteClient-Win64-Shipping.exe"
@@ -106,6 +107,7 @@ RdjIndexOf( ByRef a, needle ) {
 class RdjProgs {
     BLIZZARD         := "blizzard"
     BLIZZARD_FRIENDS := "blizzard_friends"
+    CHATTY           := "chatty"
     CHROME           := "chrome"
     CHROME_FFXIV     := "chrome_ffxiv"
     CMD              := "cmd"
@@ -117,6 +119,7 @@ class RdjProgs {
     ONEPASSWORD      := "1password"
     STEAM            := "steam"
     TWITCH           := "twitch"
+    XIV_HUNT         := "xiv_hunt"
     ALL := {}
 
     ; Chrome's window is inset compared to its window system position
@@ -130,6 +133,7 @@ class RdjProgs {
         this.ALL[this.BLIZZARD] := { title: "Blizzard Battle[.]net", exe: "Battle.net.exe", runTarget: "%ProgramFiles32%\Battle.net\Battle.net Launcher.exe", x: -1080, y: 743, w: 1080, h: 637 }
         this.ALL[this.BLIZZARD_FRIENDS] := { title: "Friends", exe: "Battle.net.exe", x: -320, y: 743, w: 320, h: 637 }
         this.ALL[this.CHROME] := { title: "^(?!FFXIV Crafting Optimizer)", exe: "chrome.exe", path: "%ProgramFiles32%\Google\Chrome\Application\", x: ( -1080 + this.CHROME_OFFSET_X ), y: 0, w: ( 1080 + this.CHROME_OFFSET_W ), h: ( 743 + this.CHROME_OFFSET_H ) } ; Chrome has like a phantom window that it insets the client window in
+        this.ALL[this.CHATTY] := { exe: "Chatty.exe", title: "Chatty", path: "%ProgramFiles32%\Chatty\", x: -1080, y: 1380, w: 1080, h: 500 }
         this.ALL[this.CHROME_FFXIV] := { title: "FFXIV Crafting Optimizer", exe: "chrome.exe", x: ( -1080 + this.CHROME_OFFSET_X ), y: 743, w: ( 1080 + this.CHROME_OFFSET_W ), h: ( 1137 + this.CHROME_OFFSET_H ) }
         this.ALL[this.CMD] := { title: "^(?!Administrator)", exe:"cmd.exe", path: "%SystemRoot%\system32\" }
         this.ALL[this.CMD_ADMIN] := { title: "Administrator", exe:"cmd.exe", path: "*RunAs %SystemRoot%\system32\" }
@@ -140,6 +144,7 @@ class RdjProgs {
         this.ALL[this.ONEPASSWORD] := { exe: "1Password.exe", path: "%ProgramFiles32%\1Password 4\" }
         this.ALL[this.STEAM] := { title: "Friends", exe: "steamwebhelper.exe", runTarget: "%ProgramFiles32%\Steam\Steam.exe", x: -1080, y: 743, w: 320, h: 637 }
         this.ALL[this.TWITCH] := { exe: "TwitchUI.exe", runTarget: "%AppData%\Twitch\Bin\Twitch.exe", x: -1080, y: 743, w: 1080, h: 637 }
+        this.ALL[this.XIV_HUNT] := { exe: "XIV-Hunt.exe", x: -608, y: 1380, w: 600, h: 508 }
     }
 
     IsActive( name ) {
@@ -264,6 +269,7 @@ class FFKeyboardMode {
   #^d:: progs.RunOrActivate( progs.DROPBOX )
   #^e:: progs.RunOrActivate( progs.EMACS )
   #+f:: progs.RunOrActivate( progs.CHROME_FFXIV )
+  #^h:: progs.RunOrActivate( progs.CHATTY )
   #^r:: progs.RepositionAll()
   #^s:: progs.RunOrActivate( progs.DISCORD )
   #^t:: progs.RunOrActivate( progs.STEAM )
@@ -301,6 +307,7 @@ class FFKeyboardMode {
  || WinActive( Overwatch )
  || WinActive( Fortnite )
  || WinActive( Rainbow6 )
+ || WinActive( BlackOps4 )
 
   ~LWin:: RdjDisableStartMenu()
   ~RWin:: RdjDisableStartMenu()
@@ -309,7 +316,13 @@ class FFKeyboardMode {
   *Up:: Send {Media_Next}
   
   #^k:: WinKill A
-#If
+  #If
+
+#If WinActive( BlackOps4 )
+  ;; Physical LCtrl becomes CapsLock. CapsLock is still LCtrl.
+  vkFF::CapsLock
+#If  
+
 
 #If WinActive( Witcher3 )
   vk07:: ; Xbox guide button
@@ -341,6 +354,19 @@ class FFKeyboardMode {
     SetKeyDelay -1
     Send {Blind}{Ctrl Up}{Shift Up}{Alt Up}
     Return
+
+  *AppsKey::
+    SetKeyDelay -1
+    Send {Blind}{Ctrl DownTemp}{Shift DownTemp}{Alt DownTemp}
+    Return
+  *AppsKey up::
+    SetKeyDelay -1
+    Send {Blind}{Ctrl Up}{Shift Up}{Alt Up}
+    Return
+
+  ;; Sometimes I hit Tab to try to switch targets in game while I have
+  ;; my AppsKey modifier down, so we don't want that switching programs
+  ^!+Tab:: Send {Tab}
   
   #f1:: Send {numpadAdd}
   #q:: Send {numpad7}
@@ -356,7 +382,6 @@ class FFKeyboardMode {
   #x:: Send {numpadDot}
   #c:: Send {numpad3}
   #v:: Send {numpadMult}
-  AppsKey Up:: Send {NumpadMult}
   
   #^q:: Send ^{numpad7}
   #^w:: Send ^{numpad8}
