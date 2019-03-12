@@ -50,6 +50,7 @@ EnvGet ProgramFiles32, ProgramFiles(x86)
 EnvGet SystemRoot, SystemRoot
 EnvGet UserProfile, UserProfile
 
+Apex           := "ahk_exe r5apex.exe"
 BlackOps4      := "ahk_exe BlackOps4.exe"
 FFXIV          := "ahk_exe ffxiv_dx11.exe"
 FFXIV_Launcher := "ahk_exe ffxivlauncher.exe"
@@ -306,6 +307,7 @@ class FFKeyboardMode {
  || WinActive( Fortnite )
  || WinActive( Rainbow6 )
  || WinActive( BlackOps4 )
+ || WinActive( Apex )
 
   ~LWin:: RdjDisableStartMenu()
   ~RWin:: RdjDisableStartMenu()
@@ -321,6 +323,9 @@ class FFKeyboardMode {
   vkFF::CapsLock
 #If  
 
+#If WinActive( Apex )
+  !Tab:: return ; disable alt-tab
+#If
 
 #If WinActive( Witcher3 )
   vk07:: ; Xbox guide button
