@@ -311,9 +311,12 @@ class FFKeyboardMode {
 
   ~LWin:: RdjDisableStartMenu()
   ~RWin:: RdjDisableStartMenu()
+  !Tab:: return ; disable alt-tab
 
   *Down:: Send {Media_Play_Pause}
   *Up:: Send {Media_Next}
+
+  *ScrollLock:: Send ^{F12} ;; Nvidia screen shot
   
   #^k:: WinKill A
 #If
@@ -322,10 +325,6 @@ class FFKeyboardMode {
   ;; Physical LCtrl becomes CapsLock. CapsLock is still LCtrl.
   vkFF::CapsLock
 #If  
-
-#If WinActive( Apex )
-  !Tab:: return ; disable alt-tab
-#If
 
 #If WinActive( Witcher3 )
   vk07:: ; Xbox guide button
