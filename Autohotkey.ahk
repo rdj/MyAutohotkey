@@ -117,6 +117,7 @@ class RdjProgs {
     DROPBOX          := "dropbox"
     EMACS            := "emacs"
     GIT_SHELL        := "git_shell"
+    ITUNES           := "itunes"
     ONEPASSWORD      := "1password"
     STEAM            := "steam"
     TEAMCRAFT        := "teamcraft"
@@ -142,6 +143,7 @@ class RdjProgs {
         this.ALL[this.DISCORD] := { exe: "Discord.exe", runTarget: "C:\Users\ryan\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Hammer & Chisel, Inc\Discord.lnk", x: -1080, y: 1380, w: 1080, h: 500 }
         this.ALL[this.EMACS] := { exe: "emacs.exe", runTarget: "%ProgramData%\chocolatey\bin\runemacs.exe", flags: "hide" }
         this.ALL[this.GIT_SHELL] := { exe: "bash.exe", runTarget: "C:\Users\ryan\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\GitHub, Inc\Git Shell.lnk" }
+        this.ALL[this.ITUNES] := { exe: "iTunes.exe", path: "%ProgramFiles%\iTunes\", x: -1080, y: 743, w: 1080, h: 637 }
         this.ALL[this.ONEPASSWORD] := { exe: "1Password.exe", path: "%ProgramFiles32%\1Password 4\" }
         this.ALL[this.STEAM] := { title: "Friends", exe: "steamwebhelper.exe", runTarget: "%ProgramFiles32%\Steam\Steam.exe", x: -1080, y: 743, w: 320, h: 637 }
         this.ALL[this.TEAMCRAFT] := { exe: "ffxiv-teamcraft.exe", path: "%UserProfile%\AppData\Local\Programs\ffxiv-teamcraft\", x: -1080 + this.CHROME_OFFSET_X, y: 743, w: 1080 + this.CHROME_OFFSET_W, h: 637 + this.CHROME_OFFSET_H }
@@ -271,6 +273,7 @@ class FFKeyboardMode {
   #^e:: progs.RunOrActivate( progs.EMACS )
   #+f:: progs.RunOrActivate( progs.TEAMCRAFT )
   #^h:: progs.RunOrActivate( progs.CHATTY )
+  #^i:: progs.RunOrActivate( progs.ITUNES )
   #^r:: progs.RepositionAll()
   #^s:: progs.RunOrActivate( progs.DISCORD )
   #^t:: progs.RunOrActivate( progs.STEAM )
