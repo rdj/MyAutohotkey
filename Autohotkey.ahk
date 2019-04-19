@@ -106,22 +106,23 @@ RdjIndexOf( ByRef a, needle ) {
 }
 
 class RdjProgs {
-    BLIZZARD         := "blizzard"
-    BLIZZARD_FRIENDS := "blizzard_friends"
-    CHATTY           := "chatty"
-    CHROME           := "chrome"
-    CHROME_FFXIV     := "chrome_ffxiv"
-    CMD              := "cmd"
-    CMD_ADMIN        := "cmd_admin"
-    DISCORD          := "discord"
-    DROPBOX          := "dropbox"
-    EMACS            := "emacs"
-    GIT_SHELL        := "git_shell"
-    ITUNES           := "itunes"
-    ONEPASSWORD      := "1password"
-    STEAM            := "steam"
-    TEAMCRAFT        := "teamcraft"
-    TWITCH           := "twitch"
+    BLIZZARD          := "blizzard"
+    BLIZZARD_FRIENDS  := "blizzard_friends"
+    CHATTY            := "chatty"
+    CHROME            := "chrome"
+    CHROME_FFXIV      := "chrome_ffxiv"
+    CMD               := "cmd"
+    CMD_ADMIN         := "cmd_admin"
+    DISCORD           := "discord"
+    DROPBOX           := "dropbox"
+    EMACS             := "emacs"
+    GIT_SHELL         := "git_shell"
+    ITUNES            := "itunes"
+    ONEPASSWORD       := "1password"
+    STEAM             := "steam"
+    TEAMCRAFT         := "teamcraft"
+    TEAMCRAFT_OVERLAY := "teamcraft_overlay"
+    TWITCH            := "twitch"
     ALL := {}
 
     ; Chrome's window is inset compared to its window system position
@@ -146,7 +147,8 @@ class RdjProgs {
         this.ALL[this.ITUNES] := { exe: "iTunes.exe", path: "%ProgramFiles%\iTunes\", x: -1080, y: 743, w: 1080, h: 637 }
         this.ALL[this.ONEPASSWORD] := { exe: "1Password.exe", path: "%ProgramFiles32%\1Password 4\" }
         this.ALL[this.STEAM] := { title: "Friends", exe: "steamwebhelper.exe", runTarget: "%ProgramFiles32%\Steam\Steam.exe", x: -1080, y: 743, w: 320, h: 637 }
-        this.ALL[this.TEAMCRAFT] := { exe: "ffxiv-teamcraft.exe", path: "%UserProfile%\AppData\Local\Programs\ffxiv-teamcraft\", x: -1080 + this.CHROME_OFFSET_X, y: 743, w: 1080 + this.CHROME_OFFSET_W, h: 637 + this.CHROME_OFFSET_H }
+        this.ALL[this.TEAMCRAFT] := { title: "^FFXIV Teamcraft$", exe: "ffxiv-teamcraft.exe", path: "%UserProfile%\AppData\Local\Programs\ffxiv-teamcraft\", x: -1080 + this.CHROME_OFFSET_X, y: 743, w: 1080 + this.CHROME_OFFSET_W, h: 637 + this.CHROME_OFFSET_H }
+        this.ALL[this.TEAMCRAFT_OVERLAY] := { title: "^FFXIV Teamcraft - Alarms overlay$", exe: "ffxiv-teamcraft.exe", x: 1874 + this.CHROME_OFFSET_X, y: 0, w: 300 + this.CHROME_OFFSET_W, h: 240 + this.CHROME_OFFSET_H }
         this.ALL[this.TWITCH] := { exe: "TwitchUI.exe", runTarget: "%AppData%\Twitch\Bin\Twitch.exe", x: -1080, y: 743, w: 1080, h: 637 }
     }
 
