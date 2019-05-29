@@ -1,38 +1,47 @@
 ;; FFPassword.ahk
 ;
-; Provies the FFPassword() function which loads your final fantasy
-; password which is securely stored in Windows Credential Manager.
+; Provides the FFPassword() function for loading your FFXIV password
+; from Windows Credential Manager. This lets you automate password
+; entry using Autohotkey without having your password sitting around
+; unencrypted for people to snoop.
 ;
-; There are a lot of ways to save your password, here are a few:
+; I created this because I found it overly burdensome to type a
+; reasonably secure password and enter a one-time code every single
+; time I wanted to launch the game. I wouldn't necessarily recommend
+; doing this if you're not using two-step authentication with the SQEX
+; Token smartphone app.
 ;
-; ## Using the command line
-; cmdkey /generic:ffxiv /user:ffxiv /pass
-; (enter your password at the prompt)
+; Here are three reasonable ways to store your password in the Windows
+; Credential Manager so that it can be used by this function:
 ;
-; ## Using the legacy Win2k UI
-; 1. Run "rundll32.exe keymgr.dll, KRShowKeyMgr"
-; 2. Choose "Add..."
-; 3. Enter "ffxiv" for "Log on to" and "User name"
-; 4. Enter your password in the password field
-; 5. Choose "A Web site or program credential"
+;   ## Using the command line
+;   cmdkey /generic:ffxiv /user:ffxiv /pass
+;   (enter your password at the prompt)
 ;
-; ## Using the Windows 10 Credential Manager UI
-; 1. Search for "Credential Manager" from start menu
-; 2. Choose "Windows Credentials"
-; 3. Choose "Add a generic credential"
-; 4. Enter "ffxiv" for "Internet or network address" and "User name"
-; 5. Enter your password in the password field
+;   ## Using the legacy Win2k UI
+;   1. Run "rundll32.exe keymgr.dll, KRShowKeyMgr"
+;   2. Choose "Add..."
+;   3. Enter "ffxiv" for "Log on to" and "User name"
+;   4. Enter your password in the password field
+;   5. Choose "A Web site or program credential"
 ;
-; To use this from your main autohotkey script, include this near the top:
+;   ## Using the Windows 10 Credential Manager UI
+;   1. Search for "Credential Manager" from start menu
+;   2. Choose "Windows Credentials"
+;   3. Choose "Add a generic credential"
+;   4. Enter "ffxiv" for "Internet or network address" and "User name"
+;   5. Enter your password in the password field
+;
+; To use from your main autohotkey script, include this file the top:
 ;
 ;   #Include FFPassword.ahk
 ;
-; Then you can use the FFPassword() function to get your password and
-; type it into the FFXIV launcher.
+; Then you can use the FFPassword() function to get your password.
 ;
-; In this example, focus the password field in the FFXIV launcher and
-; press the ` key (same key as ~), it will enter your password quickly
-; and then move to the next field (so you can enter the one time code).
+; Here's a full example. When the FFXIV Launcher is open, pressing `
+; (same key as ~) will quickly enter the password and then tab to the
+; next field. The idea is you can just hit `, enter your 6-digit
+; one-time code, and hit enter.
 ;
 ;   #If WinActive( "ahk_exe ffxivlauncher.exe" )
 ;     `::
@@ -41,6 +50,9 @@
 ;       Send {Tab}
 ;       Return
 ;   #If
+;
+; I have only tested this on 64-bit Windows 10, but if I did it
+; correctly it should work on any modern Windows.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;
