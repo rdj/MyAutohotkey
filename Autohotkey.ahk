@@ -30,13 +30,10 @@
 ;;; BEGIN AUTO-EXECUTION
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-KeyLoggerMode := 0
-#If !KeyLoggerMode
+
 #KeyHistory 0
-#If KeyLoggerMode
-#KeyHistory 100
-#InstallKeybdHook
-#If
+;;#KeyHistory 100
+;;#InstallKeybdHook
 
 #MenuMaskKey vkFFsc001 ; Default is Ctrl, which Emacs doesn't like
 
@@ -286,10 +283,6 @@ class FFKeyboardMode {
 
   #+e:: Edit
   #+r:: Reload
-#If
-
-#If KeyLoggerMode
-  #Escape:: KeyHistory
 #If
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
