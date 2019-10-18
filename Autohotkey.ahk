@@ -411,6 +411,10 @@ class FFKeyboardMode {
   #Right:: Send !{F2} ; Mutes in-game audio
 
   #Space:: ffKeyboardMode.Cycle()
+
+  #1:: SendRaw 
+  #2:: SendRaw 
+  #3:: SendRaw 
 #If
 
 #If WinActive( FFXIV ) && ffKeyboardMode.IsFishing
