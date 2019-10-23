@@ -32,18 +32,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Run this script elevated so it can control elevated windows
-full_command_line := DllCall("GetCommandLine", "str")
-if not (A_IsAdmin or RegExMatch(full_command_line, " /restart(?!\S)"))
-{
-    try
-    {
-        if A_IsCompiled
-            Run *RunAs "%A_ScriptFullPath%" /restart
-        else
-            Run *RunAs "%A_AhkPath%" /restart "%A_ScriptFullPath%"
-    }
-    ExitApp
-}
+#Include Elevate.ahk
+Elevate()
+
+#Include FFPassword.ahk
+#Include ShellRun.ahk
 
 #KeyHistory 0
 ;;#KeyHistory 100
@@ -74,9 +67,6 @@ Witcher3       := "ahk_exe witcher3.exe"
 
 ffKeyboardMode := new FFKeyboardMode()
 progs := new RdjProgs()
-
-#Include FFPassword.ahk
-#Include ShellRun.ahk
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -205,6 +195,10 @@ class RdjProgs {
             if ( spec.admin ) {
                 operation := "runas"
             }
+            ; Since this script runs elevated, any command executed
+            ; with Run would also run elevated. By using ShellRun,
+            ; commands run with limited permissions unless we use the
+            ; runas operation.
             ShellRun( this.RunTarget( spec ), , UserProfile, operation, nShowCmd )
         }
     }
