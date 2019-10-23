@@ -31,6 +31,20 @@
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;; Run this script elevated so it can control elevated windows
+full_command_line := DllCall("GetCommandLine", "str")
+if not (A_IsAdmin or RegExMatch(full_command_line, " /restart(?!\S)"))
+{
+    try
+    {
+        if A_IsCompiled
+            Run *RunAs "%A_ScriptFullPath%" /restart
+        else
+            Run *RunAs "%A_AhkPath%" /restart "%A_ScriptFullPath%"
+    }
+    ExitApp
+}
+
 #KeyHistory 0
 ;;#KeyHistory 100
 ;;#InstallKeybdHook
@@ -41,6 +55,7 @@ SetTitleMatchMode RegEx
 
 #NoEnv ; Don't create AHK vars for all env vars
 EnvGet AppData, APPDATA
+EnvGet AllUsersProfile, AllUsersProfile
 ;ComSpec := A_ComSpec
 EnvGet ProgramData, ProgramData
 EnvGet ProgramFiles32, ProgramFiles(x86)
@@ -61,6 +76,7 @@ ffKeyboardMode := new FFKeyboardMode()
 progs := new RdjProgs()
 
 #Include FFPassword.ahk
+#Include ShellRun.ahk
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -103,6 +119,7 @@ RdjIndexOf( ByRef a, needle ) {
 }
 
 class RdjProgs {
+    ACT               := "act"
     BLIZZARD          := "blizzard"
     BLIZZARD_FRIENDS  := "blizzard_friends"
     CHATTY            := "chatty"
@@ -130,17 +147,18 @@ class RdjProgs {
     ;; This is a mess, but AHK's version of line continutation is
     ;; pretty funky and ill-suited to formatting this reasonably
     __New() {
+        this.ALL[this.ACT] := { title: "^Advanced Combat Tracker", exe: "Advanced Combat Tracker.exe", path: "%ProgramFiles32%\Advanced Combat Tracker\", admin: true, x: -1080 + this.CHROME_OFFSET_X, y: 743, w: 1080 + this.CHROME_OFFSET_W, h: 637 + this.CHROME_OFFSET_H }
         this.ALL[this.BLIZZARD] := { title: "Blizzard Battle[.]net", exe: "Battle.net.exe", runTarget: "%ProgramFiles32%\Battle.net\Battle.net Launcher.exe", x: -1080, y: 743, w: 1080, h: 637 }
         this.ALL[this.BLIZZARD_FRIENDS] := { title: "Friends", exe: "Battle.net.exe", x: -320, y: 743, w: 320, h: 637 }
         this.ALL[this.CHROME] := { title: "^(?!FFXIV Crafting Optimizer)", exe: "chrome.exe", path: "%ProgramFiles32%\Google\Chrome\Application\", x: ( -1080 + this.CHROME_OFFSET_X ), y: 0, w: ( 1080 + this.CHROME_OFFSET_W ), h: ( 300 + 743 + this.CHROME_OFFSET_H ) } ; Chrome has like a phantom window that it insets the client window in
         this.ALL[this.CHATTY] := { exe: "Chatty.exe", title: "Chatty", path: "%ProgramFiles32%\Chatty\", x: -1080, y: 1380, w: 1080, h: 500 }
         this.ALL[this.CHROME_FFXIV] := { title: "FFXIV Crafting Optimizer", exe: "chrome.exe", x: ( -1080 + this.CHROME_OFFSET_X ), y: 743, w: ( 1080 + this.CHROME_OFFSET_W ), h: ( 1137 + this.CHROME_OFFSET_H ) }
         this.ALL[this.CMD] := { title: "^(?!Administrator)", exe:"cmd.exe", path: "%SystemRoot%\system32\" }
-        this.ALL[this.CMD_ADMIN] := { title: "Administrator", exe:"cmd.exe", path: "*RunAs %SystemRoot%\system32\" }
+        this.ALL[this.CMD_ADMIN] := { title: "Administrator", exe:"cmd.exe", path: "%SystemRoot%\system32\", admin: true }
         this.ALL[this.DROPBOX] := { title: "Dropbox", exe: "Explorer.EXE", runTarget: "%UserProfile%\Dropbox" }
-        this.ALL[this.DISCORD] := { exe: "Discord.exe", runTarget: "C:\Users\ryan\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Hammer & Chisel, Inc\Discord.lnk", x: -1080, y: 1380, w: 1080, h: 500 }
-        this.ALL[this.EMACS] := { exe: "emacs.exe", runTarget: "%ProgramData%\chocolatey\bin\runemacs.exe", flags: "hide" }
-        this.ALL[this.GIT_SHELL] := { exe: "bash.exe", runTarget: "C:\Users\ryan\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\GitHub, Inc\Git Shell.lnk" }
+        this.ALL[this.DISCORD] := { exe: "Discord.exe", runTarget: "%AppData%\Microsoft\Windows\Start Menu\Programs\Hammer & Chisel, Inc\Discord.lnk", x: -1080, y: 1380, w: 1080, h: 500 }
+        this.ALL[this.EMACS] := { exe: "emacs.exe", runTarget: "%ProgramData%\chocolatey\bin\runemacs.exe", hide: true }
+        this.ALL[this.GIT_SHELL] := { exe: "mintty.exe", runTarget: "%AllUsersProfile%\Microsoft\Windows\Start Menu\Programs\Git\Git Bash.lnk" }
         this.ALL[this.ITUNES] := { exe: "iTunes.exe", path: "%ProgramFiles%\iTunes\", x: -1080, y: 743, w: 1080, h: 637 }
         this.ALL[this.ONEPASSWORD] := { exe: "1Password.exe", path: "%UserProfile%\AppData\Local\1Password\app\7\" }
         this.ALL[this.STEAM] := { title: "Friends", exe: "steamwebhelper.exe", runTarget: "%ProgramFiles32%\Steam\Steam.exe", x: -1080, y: 743, w: 320, h: 637 }
@@ -177,8 +195,17 @@ class RdjProgs {
             WinActivate ahk_id %hwnd%
         }
         else {
-            local flags := spec.flags
-            Run % this.RunTarget( spec ), %UserProfile%, %flags%
+            ; nShowCmd values are documented here:
+            ; https://docs.microsoft.com/en-us/windows/win32/api/shellapi/nf-shellapi-shellexecutea
+            local nShowCmd := 1 ; SW_SHOWNORMAL
+            if ( spec.hide ) {
+                nShowCmd := 0 ; SW_HIDE
+            }
+            local operation
+            if ( spec.admin ) {
+                operation := "runas"
+            }
+            ShellRun( this.RunTarget( spec ), , UserProfile, operation, nShowCmd )
         }
     }
 
@@ -266,6 +293,7 @@ class FFKeyboardMode {
   #F12:: Send {Volume_Up}
 
   #^1:: progs.RunOrActivate( progs.ONEPASSWORD )
+  #^a:: progs.RunOrActivate( progs.ACT )
   #^c:: progs.RunOrActivate( progs.CMD )
   #+c:: progs.RunOrActivate( progs.CMD_ADMIN )
   #^d:: progs.RunOrActivate( progs.DROPBOX )
