@@ -37,6 +37,7 @@ Elevate()
 
 #Include FFPassword.ahk
 #Include ShellRun.ahk
+#Include Spotify.ahk
 
 #KeyHistory 0
 ;;#KeyHistory 100
@@ -123,6 +124,7 @@ class RdjProgs {
     ITUNES            := "itunes"
     ONEPASSWORD       := "1password"
     PANDORA           := "pandora"
+    SPOTIFY           := "spotify"
     STEAM             := "steam"
     TEAMCRAFT         := "teamcraft"
     TEAMCRAFT_OVERLAY := "teamcraft_overlay"
@@ -159,6 +161,7 @@ class RdjProgs {
         this.ALL[this.ITUNES] := { exe: "iTunes.exe", path: "%ProgramFiles%\iTunes\", x: -1080, y: 743, w: 1080, h: 637 }
         this.ALL[this.ONEPASSWORD] := { exe: "1Password.exe", path: "%UserProfile%\AppData\Local\1Password\app\7\" }
         this.ALL[this.PANDORA] := { exe: "Pandora.exe", runTarget: "shell:AppsFolder\PandoraMediaInc.29680B314EFC2_n619g4d5j0fnw!App", x: ( -1080 + this.CHROME_OFFSET_X ), y: 0, w: ( 1080 + this.CHROME_OFFSET_W ), h: ( 743 + this.CHROME_OFFSET_H ) }
+        this.ALL[this.SPOTIFY] := { title: "^.", exe: "Spotify.exe", path: "%UserProfile%\AppData\Roaming\Spotify\", x: ( -1080 + this.CHROME_OFFSET_X ), y: 743 + 38, w: ( 1080 + this.CHROME_OFFSET_W - 8), h: ( 637 - 100 + this.CHROME_OFFSET_H ) }
         this.ALL[this.STEAM] := { title: "Friends", exe: "steamwebhelper.exe", runTarget: "%ProgramFiles32%\Steam\Steam.exe", x: -1080, y: 743, w: 320, h: 637 }
         this.ALL[this.TEAMCRAFT] := { title: "^(?!FFXIV Teamcraft - Alarms overlay)", exe: "FFXIV Teamcraft.exe", path: "%UserProfile%\%AppData\Local\ffxiv-teamcraft\", x: -1080 + this.CHROME_OFFSET_X, y: 743, w: 1080 + this.CHROME_OFFSET_W, h: 637 + this.CHROME_OFFSET_H }
         this.ALL[this.TEAMCRAFT_OVERLAY] := { title: "^FFXIV Teamcraft - Alarms overlay$", exe: "FFXIV Teamcraft.exe", x: 1874 + this.CHROME_OFFSET_X, y: 0, w: 300 + this.CHROME_OFFSET_W, h: 240 + this.CHROME_OFFSET_H }
@@ -220,6 +223,16 @@ class RdjProgs {
         }
         Transform runTarget, DeRef, %runTarget%
         return runTarget
+    }
+
+    SendTo( name, keys ) {
+        local spec := this.ALL[name]
+        if ( "" == spec ) {
+            return
+        }
+        if ( local hwnd := WinExist( this.WinTarget( spec ) ) ) {
+            ControlSend ,,%keys%,ahk_id %hwnd%
+        }
     }
 
     WinTarget( spec ) {
@@ -295,6 +308,8 @@ class FFKeyboardMode {
   #F10:: Send {Volume_Mute}
   #F11:: Send {Volume_Down}
   #F12:: Send {Volume_Up}
+  #PgUp:: spotifyKey("^{Up}")
+  #PgDn:: spotifyKey("^{Down}")
 
   #^1:: progs.RunOrActivate( progs.ONEPASSWORD )
   #^a:: progs.RunOrActivate( progs.ACT )
@@ -305,7 +320,7 @@ class FFKeyboardMode {
   #+f:: progs.RunOrActivate( progs.TEAMCRAFT )
   #^h:: progs.RunOrActivate( progs.CHATTY )
   #^i:: progs.RunOrActivate( progs.ITUNES )
-  #^p:: progs.RunOrActivate( progs.PANDORA )
+  #^p:: progs.RunOrActivate( progs.SPOTIFY )
   #^q:: progs.RunOrActivate( progs.ACT )
   #^r:: progs.RepositionAll()
   #^s:: progs.RunOrActivate( progs.DISCORD )
