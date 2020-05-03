@@ -64,6 +64,7 @@ Fortnite       := "ahk_exe FortniteClient-Win64-Shipping.exe"
 Overwatch      := "ahk_exe Overwatch.exe"
 Pubg           := "ahk_exe TslGame.exe"
 Rainbow6       := "ahk_exe RainbowSix.exe"
+Valorant       := "ahk_exe VALORANT-Win64-Shipping.exe"
 Witcher3       := "ahk_exe witcher3.exe"
 
 ffKeyboardMode := new FFKeyboardMode()
@@ -360,6 +361,7 @@ class FFKeyboardMode {
  || WinActive( Rainbow6 )
  || WinActive( BlackOps4 )
  || WinActive( Apex )
+ || WinActive( Valorant )
 
   ~LWin:: RdjDisableStartMenu()
   ~RWin:: RdjDisableStartMenu()
