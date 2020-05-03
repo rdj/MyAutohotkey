@@ -306,6 +306,7 @@ class FFKeyboardMode {
   #^h:: progs.RunOrActivate( progs.CHATTY )
   #^i:: progs.RunOrActivate( progs.ITUNES )
   #^p:: progs.RunOrActivate( progs.PANDORA )
+  #^q:: progs.RunOrActivate( progs.ACT )
   #^r:: progs.RepositionAll()
   #^s:: progs.RunOrActivate( progs.DISCORD )
   #^t:: progs.RunOrActivate( progs.STEAM )
