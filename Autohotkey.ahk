@@ -125,6 +125,8 @@ class RdjProgs {
     STEAM             := "steam"
     TEAMCRAFT         := "teamcraft"
     TEAMCRAFT_OVERLAY := "teamcraft_overlay"
+    TERMINAL          := "terminal"
+    TERMINAL_ADMIN    := "terminal_admin"
     TWITCH            := "twitch"
     ALL := {}
 
@@ -158,6 +160,8 @@ class RdjProgs {
         this.ALL[this.STEAM] := { title: "Friends", exe: "steamwebhelper.exe", runTarget: "%ProgramFiles32%\Steam\Steam.exe", x: -1080, y: 743, w: 320, h: 637 }
         this.ALL[this.TEAMCRAFT] := { title: "^(?!FFXIV Teamcraft - Alarms overlay)", exe: "ffxiv-teamcraft.exe", path: "%UserProfile%\AppData\Local\Programs\ffxiv-teamcraft\", x: -1080 + this.CHROME_OFFSET_X, y: 743, w: 1080 + this.CHROME_OFFSET_W, h: 637 + this.CHROME_OFFSET_H }
         this.ALL[this.TEAMCRAFT_OVERLAY] := { title: "^FFXIV Teamcraft - Alarms overlay$", exe: "ffxiv-teamcraft.exe", x: 1874 + this.CHROME_OFFSET_X, y: 0, w: 300 + this.CHROME_OFFSET_W, h: 240 + this.CHROME_OFFSET_H }
+        this.ALL[this.TERMINAL] := { title: "^(?!Administrator)", exe:"WindowsTerminal.exe", runTarget: "shell:AppsFolder\Microsoft.WindowsTerminal_8wekyb3d8bbwe!App" }
+        this.ALL[this.TERMINAL_ADMIN] := { title: "^Administrator", exe:"WindowsTerminal.exe", runTarget: "shell:AppsFolder\Microsoft.WindowsTerminal_8wekyb3d8bbwe!App", admin: true }
         this.ALL[this.TWITCH] := { exe: "TwitchUI.exe", runTarget: "%AppData%\Twitch\Bin\Twitch.exe", x: -1080, y: 743, w: 1080, h: 637 }
     }
 
@@ -292,8 +296,8 @@ class FFKeyboardMode {
 
   #^1:: progs.RunOrActivate( progs.ONEPASSWORD )
   #^a:: progs.RunOrActivate( progs.ACT )
-  #^c:: progs.RunOrActivate( progs.CMD )
-  #+c:: progs.RunOrActivate( progs.CMD_ADMIN )
+  #^c:: progs.RunOrActivate( progs.TERMINAL )
+  #+c:: progs.RunOrActivate( progs.TERMINAL_ADMIN )
   #^d:: progs.RunOrActivate( progs.DROPBOX )
   #^e:: progs.RunOrActivate( progs.EMACS )
   #+f:: progs.RunOrActivate( progs.TEAMCRAFT )
