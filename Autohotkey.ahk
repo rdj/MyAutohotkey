@@ -122,6 +122,7 @@ class RdjProgs {
     FIREFOX           := "firefox"
     GIT_SHELL         := "git_shell"
     ITUNES            := "itunes"
+    OBS               := "obs"
     ONEPASSWORD       := "1password"
     PANDORA           := "pandora"
     SPOTIFY           := "spotify"
@@ -159,6 +160,7 @@ class RdjProgs {
         this.ALL[this.FIREFOX] := { title: "ahk_class MozillaWindowClass", exe: "firefox.exe", path: "%ProgramFiles%\Mozilla Firefox\", x: -1080 + this.FIREFOX_OFFSET_X, y: 0 + this.FIREFOX_OFFSET_Y, w: 1080 + this.FIREFOX_OFFSET_W, h: 100 + 743 + this.FIREFOX_OFFSET_H }
         this.ALL[this.GIT_SHELL] := { exe: "mintty.exe", runTarget: "%AllUsersProfile%\Microsoft\Windows\Start Menu\Programs\Git\Git Bash.lnk" }
         this.ALL[this.ITUNES] := { exe: "iTunes.exe", path: "%ProgramFiles%\iTunes\", x: -1080, y: 743, w: 1080, h: 637 }
+        this.ALL[this.OBS] := { exe: "obs64.exe", runTarget: "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\OBS Studio\OBS Studio (64bit).lnk", x: -1080 + this.CHROME_OFFSET_X, y: 843, w: 1080 + this.CHROME_OFFSET_W, h: 637 - 100 + this.CHROME_OFFSET_H }
         this.ALL[this.ONEPASSWORD] := { exe: "1Password.exe", path: "%UserProfile%\AppData\Local\1Password\app\7\" }
         this.ALL[this.PANDORA] := { exe: "Pandora.exe", runTarget: "shell:AppsFolder\PandoraMediaInc.29680B314EFC2_n619g4d5j0fnw!App", x: ( -1080 + this.CHROME_OFFSET_X ), y: 0, w: ( 1080 + this.CHROME_OFFSET_W ), h: ( 743 + this.CHROME_OFFSET_H ) }
         this.ALL[this.SPOTIFY] := { title: "^.", exe: "Spotify.exe", path: "%UserProfile%\AppData\Roaming\Spotify\", x: ( -1080 + this.CHROME_OFFSET_X ), y: 743 + 38, w: ( 1080 + this.CHROME_OFFSET_W - 8), h: ( 637 - 100 + this.CHROME_OFFSET_H ) }
@@ -320,6 +322,7 @@ class FFKeyboardMode {
   #+f:: progs.RunOrActivate( progs.TEAMCRAFT )
   #^h:: progs.RunOrActivate( progs.CHATTY )
   #^i:: progs.RunOrActivate( progs.ITUNES )
+  #^o:: progs.RunOrActivate( progs.OBS )
   #^p:: progs.RunOrActivate( progs.SPOTIFY )
   #^q:: progs.RunOrActivate( progs.ACT )
   #^r:: progs.RepositionAll()
