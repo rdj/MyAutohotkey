@@ -79,7 +79,6 @@ progs := new RdjProgs()
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Return
 
-
 ;; When AHK intercepts a Win+? hotkey, it sends the value from
 ;; #MenuMaskKey (default Ctrl) to prevent the start menu from opening.
 ;; We can do the same thing in just the LWin/RWin handlers to prevent
@@ -114,7 +113,6 @@ class RdjProgs {
     BLIZZARD_FRIENDS  := "blizzard_friends"
     CHATTY            := "chatty"
     CHROME            := "chrome"
-    CHROME_FFXIV      := "chrome_ffxiv"
     CMD               := "cmd"
     CMD_ADMIN         := "cmd_admin"
     DISCORD           := "discord"
@@ -142,7 +140,6 @@ class RdjProgs {
         this.ALL[this.BLIZZARD_FRIENDS] := { title: "Friends", exe: "Battle.net.exe", x: -320, y: 743, w: 320, h: 637 }
         this.ALL[this.CHROME] := { title: "^(?!FFXIV Crafting Optimizer)", exe: "chrome.exe", path: "%ProgramFiles32%\Google\Chrome\Application\", x: ( -1080 + this.CHROME_OFFSET_X ), y: 0, w: ( 1080 + this.CHROME_OFFSET_W ), h: ( 300 + 743 + this.CHROME_OFFSET_H ) } ; Chrome has like a phantom window that it insets the client window in
         this.ALL[this.CHATTY] := { exe: "Chatty.exe", title: "Chatty", path: "%ProgramFiles32%\Chatty\", x: -1080, y: 1380, w: 1080, h: 500 }
-        this.ALL[this.CHROME_FFXIV] := { title: "FFXIV Crafting Optimizer", exe: "chrome.exe", x: ( -1080 + this.CHROME_OFFSET_X ), y: 743, w: ( 1080 + this.CHROME_OFFSET_W ), h: ( 1137 + this.CHROME_OFFSET_H ) }
         this.ALL[this.CMD] := { title: "^(?!Administrator)", exe:"cmd.exe", path: "%SystemRoot%\system32\" }
         this.ALL[this.CMD_ADMIN] := { title: "Administrator", exe:"cmd.exe", path: "%SystemRoot%\system32\", admin: true }
         this.ALL[this.DROPBOX] := { title: "Dropbox", exe: "Explorer.EXE", runTarget: "%UserProfile%\Dropbox" }
@@ -313,7 +310,7 @@ class FFKeyboardMode {
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-#If progs.IsActive( progs.CHROME ) || progs.IsActive( progs.CHROME_FFXIV )
+#If progs.IsActive( progs.CHROME )
   ;; Disable back/forward mouse buttons in chrome
   XButton1:: Return
   XButton2:: Return
