@@ -118,6 +118,7 @@ class RdjProgs {
     DISCORD           := "discord"
     DROPBOX           := "dropbox"
     EMACS             := "emacs"
+    FIREFOX           := "firefox"
     GIT_SHELL         := "git_shell"
     ITUNES            := "itunes"
     ONEPASSWORD       := "1password"
@@ -132,6 +133,11 @@ class RdjProgs {
     CHROME_OFFSET_W := 15
     CHROME_OFFSET_H := 8
 
+    FIREFOX_OFFSET_W := 10
+    FIREFOX_OFFSET_H := 6
+    FIREFOX_OFFSET_X := - ( this.FIREFOX_OFFSET_W / 2 )
+    FIREFOX_OFFSET_Y := -1
+
     ;; This is a mess, but AHK's version of line continutation is
     ;; pretty funky and ill-suited to formatting this reasonably
     __New() {
@@ -145,6 +151,7 @@ class RdjProgs {
         this.ALL[this.DROPBOX] := { title: "Dropbox", exe: "Explorer.EXE", runTarget: "%UserProfile%\Dropbox" }
         this.ALL[this.DISCORD] := { exe: "Discord.exe", runTarget: "%AppData%\Microsoft\Windows\Start Menu\Programs\Hammer & Chisel, Inc\Discord.lnk", x: -1080, y: 1380, w: 1080, h: 500 }
         this.ALL[this.EMACS] := { exe: "emacs.exe", runTarget: "%ProgramData%\chocolatey\bin\runemacs.exe", hide: true }
+        this.ALL[this.FIREFOX] := { title: "ahk_class MozillaWindowClass", exe: "firefox.exe", path: "%ProgramFiles%\Mozilla Firefox\", x: -1080 + this.FIREFOX_OFFSET_X, y: 0 + this.FIREFOX_OFFSET_Y, w: 1080 + this.FIREFOX_OFFSET_W, h: 100 + 743 + this.FIREFOX_OFFSET_H }
         this.ALL[this.GIT_SHELL] := { exe: "mintty.exe", runTarget: "%AllUsersProfile%\Microsoft\Windows\Start Menu\Programs\Git\Git Bash.lnk" }
         this.ALL[this.ITUNES] := { exe: "iTunes.exe", path: "%ProgramFiles%\iTunes\", x: -1080, y: 743, w: 1080, h: 637 }
         this.ALL[this.ONEPASSWORD] := { exe: "1Password.exe", path: "%UserProfile%\AppData\Local\1Password\app\7\" }
@@ -295,7 +302,7 @@ class FFKeyboardMode {
   #^r:: progs.RepositionAll()
   #^s:: progs.RunOrActivate( progs.DISCORD )
   #^t:: progs.RunOrActivate( progs.STEAM )
-  #^u:: progs.RunOrActivate( progs.CHROME )
+  #^u:: progs.RunOrActivate( progs.FIREFOX )
   #^w:: progs.RunOrActivate( progs.TWITCH )
   #^x:: progs.RunOrActivate( progs.GIT_SHELL )
   #^z:: progs.RunOrActivate( progs.BLIZZARD )
@@ -310,7 +317,7 @@ class FFKeyboardMode {
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-#If progs.IsActive( progs.CHROME )
+#If progs.IsActive( progs.CHROME ) || progs.IsActive( progs.FIREFOX )
   ;; Disable back/forward mouse buttons in chrome
   XButton1:: Return
   XButton2:: Return
