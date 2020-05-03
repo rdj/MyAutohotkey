@@ -352,7 +352,13 @@ class FFKeyboardMode {
 
   *ScrollLock:: Send ^{F12} ;; Nvidia screen shot
   
-  #^k:: WinKill A
+  #^k::
+    ;; This use to just be
+    ;;   WinKill A
+    ;; But for some reason that stopped working
+    WinGet active_pid, PID, A
+    Process Close, %active_pid%
+    Return
 #If
 
 #If WinActive( BlackOps4 )
