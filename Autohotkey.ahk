@@ -35,7 +35,6 @@
 #Include Elevate.ahk
 Elevate()
 
-#Include FFPassword.ahk
 #Include ShellRun.ahk
 #Include Spotify.ahk
 
@@ -82,6 +81,8 @@ progs := new RdjProgs()
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Return
+
+#Include FFPassword.ahk
 
 ;; When AHK intercepts a Win+? hotkey, it sends the value from
 ;; #MenuMaskKey (default Ctrl) to prevent the start menu from opening.
@@ -502,3 +503,5 @@ class FFKeyboardMode {
   c:: Send {numpad3}
   v:: Send {numpadMult}
 #If
+
+#include DisableOfficeKey.ahk
