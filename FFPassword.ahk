@@ -120,3 +120,12 @@ FFPassword() {
 
     return password
 }
+
+FFCode() {
+    clipboard := ""
+    run % comspec " /c c:\Users\ryan\projects\totp\totp\bin\Debug\totp.exe | clip",,hide
+    ClipWait
+    code := Trim(clipboard, "`r`n`t ")
+    clipboard := ""
+    return code
+}    

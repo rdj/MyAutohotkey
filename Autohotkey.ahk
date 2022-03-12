@@ -51,21 +51,23 @@ SetTitleMatchMode RegEx
 EnvGet AppData, APPDATA
 EnvGet AllUsersProfile, AllUsersProfile
 ;ComSpec := A_ComSpec
+EnvGet LocalAppData, LocalAppData
 EnvGet ProgramData, ProgramData
 EnvGet ProgramFiles32, ProgramFiles(x86)
 EnvGet SystemRoot, SystemRoot
 EnvGet UserProfile, UserProfile
 
-Apex           := "ahk_exe r5apex.exe"
-BlackOps4      := "ahk_exe BlackOps4.exe"
-FFXIV          := "ahk_exe ffxiv_dx11.exe"
-FFXIV_Launcher := "ahk_exe ffxivlauncher.exe"
-Fortnite       := "ahk_exe FortniteClient-Win64-Shipping.exe"
-Overwatch      := "ahk_exe Overwatch.exe"
-Pubg           := "ahk_exe TslGame.exe"
-Rainbow6       := "ahk_exe RainbowSix.exe"
-Valorant       := "ahk_exe VALORANT-Win64-Shipping.exe"
-Witcher3       := "ahk_exe witcher3.exe"
+Apex             := "ahk_exe r5apex.exe"
+BlackOps4        := "ahk_exe BlackOps4.exe"
+FFXIV            := "ahk_exe ffxiv_dx11.exe"
+FFXIV_Launcher   := "ahk_exe ffxivlauncher.exe"
+FFXIV_Launcher64 := "ahk_exe ffxivlauncher64.exe"
+Fortnite         := "ahk_exe FortniteClient-Win64-Shipping.exe"
+Overwatch        := "ahk_exe Overwatch.exe"
+Pubg             := "ahk_exe TslGame.exe"
+Rainbow6         := "ahk_exe RainbowSix.exe"
+Valorant         := "ahk_exe VALORANT-Win64-Shipping.exe"
+Witcher3         := "ahk_exe witcher3.exe"
 
 ffKeyboardMode := new FFKeyboardMode()
 progs := new RdjProgs()
@@ -132,7 +134,7 @@ class RdjProgs {
     TEAMCRAFT_OVERLAY := "teamcraft_overlay"
     TERMINAL          := "terminal"
     TERMINAL_ADMIN    := "terminal_admin"
-    TWITCH            := "twitch"
+    XIV_LAUNCHER      := "xivlauncher"
     ALL := {}
 
     ; Chrome's window is inset compared to its window system position
@@ -148,7 +150,8 @@ class RdjProgs {
     ;; This is a mess, but AHK's version of line continutation is
     ;; pretty funky and ill-suited to formatting this reasonably
     __New() {
-        this.ALL[this.ACT] := { title: "^Advanced Combat Tracker", exe: "Advanced Combat Tracker.exe", path: "%ProgramFiles32%\Advanced Combat Tracker\", admin: true, x: -1080 + this.CHROME_OFFSET_X, y: 743, w: 1080 + this.CHROME_OFFSET_W, h: 637 + this.CHROME_OFFSET_H }
+;        this.ALL[this.ACT] := { title: "^Advanced Combat Tracker", exe: "Advanced Combat Tracker.exe", path: "%ProgramFiles32%\Advanced Combat Tracker\", admin: true, x: -1080 + this.CHROME_OFFSET_X, y: 743, w: 1080 + this.CHROME_OFFSET_W, h: 637 + this.CHROME_OFFSET_H }
+        this.ALL[this.ACT] := { title: "^Advanced Combat Tracker", exe: "Advanced Combat Tracker.exe", path: "%ProgramFiles32%\Advanced Combat Tracker\", x: -1080 + this.CHROME_OFFSET_X, y: 743, w: 1080 + this.CHROME_OFFSET_W, h: 637 + this.CHROME_OFFSET_H }
         this.ALL[this.BLIZZARD] := { title: "Blizzard Battle[.]net", exe: "Battle.net.exe", runTarget: "%ProgramFiles32%\Battle.net\Battle.net Launcher.exe", x: -1080, y: 743, w: 1080, h: 637 }
         this.ALL[this.BLIZZARD_FRIENDS] := { title: "Friends", exe: "Battle.net.exe", x: -320, y: 743, w: 320, h: 637 }
         this.ALL[this.CHROME] := { title: "^(?!FFXIV Crafting Optimizer)", exe: "chrome.exe", path: "%ProgramFiles32%\Google\Chrome\Application\", x: ( -1080 + this.CHROME_OFFSET_X ), y: 0, w: ( 1080 + this.CHROME_OFFSET_W ), h: ( 300 + 743 + this.CHROME_OFFSET_H ) } ; Chrome has like a phantom window that it insets the client window in
@@ -166,11 +169,12 @@ class RdjProgs {
         this.ALL[this.PANDORA] := { exe: "Pandora.exe", runTarget: "shell:AppsFolder\PandoraMediaInc.29680B314EFC2_n619g4d5j0fnw!App", x: ( -1080 + this.CHROME_OFFSET_X ), y: 0, w: ( 1080 + this.CHROME_OFFSET_W ), h: ( 743 + this.CHROME_OFFSET_H ) }
         this.ALL[this.SPOTIFY] := { title: "^.", exe: "Spotify.exe", path: "%UserProfile%\AppData\Roaming\Spotify\", x: ( -1080 + this.CHROME_OFFSET_X ), y: 743 + 38, w: ( 1080 + this.CHROME_OFFSET_W - 8), h: ( 637 - 100 + this.CHROME_OFFSET_H ) }
         this.ALL[this.STEAM] := { title: "Friends", exe: "steamwebhelper.exe", runTarget: "%ProgramFiles32%\Steam\Steam.exe", x: -1080, y: 743, w: 320, h: 637 }
-        this.ALL[this.TEAMCRAFT] := { title: "^(?!FFXIV Teamcraft - Alarms overlay)", exe: "FFXIV Teamcraft.exe", path: "%UserProfile%\%AppData\Local\ffxiv-teamcraft\", x: -1080 + this.CHROME_OFFSET_X, y: 743, w: 1080 + this.CHROME_OFFSET_W, h: 637 + this.CHROME_OFFSET_H }
+        this.ALL[this.TEAMCRAFT] := { title: "^(?!FFXIV Teamcraft - Alarms overlay)", exe: "FFXIV Teamcraft.exe", path: "%LocalAppData%\ffxiv-teamcraft\", x: -1080 + this.CHROME_OFFSET_X, y: 743, w: 1080 + this.CHROME_OFFSET_W, h: 637 + this.CHROME_OFFSET_H  }
+        ; runTarget: "%UserProfile%\TeamcraftNOUAC.cmd", hide: true
         this.ALL[this.TEAMCRAFT_OVERLAY] := { title: "^FFXIV Teamcraft - Alarms overlay$", exe: "FFXIV Teamcraft.exe", x: 1874 + this.CHROME_OFFSET_X, y: 0, w: 300 + this.CHROME_OFFSET_W, h: 240 + this.CHROME_OFFSET_H }
         this.ALL[this.TERMINAL] := { title: "^(?!Administrator)", exe:"WindowsTerminal.exe", runTarget: "shell:AppsFolder\Microsoft.WindowsTerminal_8wekyb3d8bbwe!App" }
         this.ALL[this.TERMINAL_ADMIN] := { title: "^Administrator", exe:"WindowsTerminal.exe", runTarget: "shell:AppsFolder\Microsoft.WindowsTerminal_8wekyb3d8bbwe!App", admin: true }
-        this.ALL[this.TWITCH] := { exe: "TwitchUI.exe", runTarget: "%AppData%\Twitch\Bin\Twitch.exe", x: -1080, y: 743, w: 1080, h: 637 }
+        this.ALL[this.XIV_LAUNCHER] := { exe: "XIVLauncher.exe", path: "%LocalAppData%\XIVLauncher\" }
     }
 
     IsActive( name ) {
@@ -259,7 +263,8 @@ class FFKeyboardMode {
     static MODE_DEFAULT := ""
     static MODE_NUMPAD := "NUMPAD"
     static MODE_FISHING := "FISHING"
-    static ALL_MODES := [ FFKeyboardMode.MODE_DEFAULT, FFKeyboardMode.MODE_NUMPAD, FFKeyboardMode.MODE_FISHING ]
+;    static ALL_MODES := [ FFKeyboardMode.MODE_DEFAULT, FFKeyboardMode.MODE_NUMPAD, FFKeyboardMode.MODE_FISHING ]
+    static ALL_MODES := [ FFKeyboardMode.MODE_DEFAULT, FFKeyboardMode.MODE_NUMPAD ]
 
     _currentMode := FFKeyboardMode.MODE_DEFAULT
     CurrentMode[] {
@@ -323,6 +328,7 @@ class FFKeyboardMode {
   #+f:: progs.RunOrActivate( progs.TEAMCRAFT )
   #^h:: progs.RunOrActivate( progs.CHATTY )
   #^i:: progs.RunOrActivate( progs.ITUNES )
+  #^l:: progs.RunOrActivate( progs.XIV_LAUNCHER )
   #^o:: progs.RunOrActivate( progs.OBS )
   #^p:: progs.RunOrActivate( progs.SPOTIFY )
   #^q:: progs.RunOrActivate( progs.ACT )
@@ -330,12 +336,13 @@ class FFKeyboardMode {
   #^s:: progs.RunOrActivate( progs.DISCORD )
   #^t:: progs.RunOrActivate( progs.STEAM )
   #^u:: progs.RunOrActivate( progs.FIREFOX )
-  #^w:: progs.RunOrActivate( progs.TWITCH )
   #^x:: progs.RunOrActivate( progs.GIT_SHELL )
   #^z:: progs.RunOrActivate( progs.BLIZZARD )
 
   #+e:: Edit
   #+r:: Reload
+  ;; Voicemeeter: restart audio engine
+  #+v:: ShellRun( ProgramFiles32 . "\VB\Voicemeeter\voicemeeterpro.exe", "-r", UserProfile, , 0 )
 #If
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -370,8 +377,6 @@ class FFKeyboardMode {
   *Down:: Send {Media_Play_Pause}
   *Up:: Send {Media_Next}
 
-  *ScrollLock:: Send ^{F12} ;; Nvidia screen shot
-  
   #^k::
     ;; This use to just be
     ;;   WinKill A
@@ -394,11 +399,18 @@ class FFKeyboardMode {
     Return
 #If
 
-#If WinActive( FFXIV_Launcher )
+#If WinActive( FFXIV_Launcher ) || WinActive( FFXIV_Launcher64 )
   `::
     SetKeyDelay 0
     SendRaw % FFPassword()
     Send {Tab}
+    Return
+#If
+
+#If progs.isActive( progs.XIV_LAUNCHER )
+  `::
+    SetKeyDelay 0
+    SendRaw % FFCode()
     Return
 #If
 
@@ -458,7 +470,7 @@ class FFKeyboardMode {
   #^x:: Send {numpadDot}
   #^c:: Send ^{numpad3}
   #^v:: Send {numpadMult}
-    
+
   #Down:: Send {Media_Play_Pause}
   #Up:: Send {Media_Next}
   #Right:: Send !{F2} ; Mutes in-game audio
@@ -468,6 +480,7 @@ class FFKeyboardMode {
   #1:: SendRaw 
   #2:: SendRaw 
   #3:: SendRaw 
+  #n:: SendRaw ñ
 #If
 
 #If WinActive( FFXIV ) && ffKeyboardMode.IsFishing
