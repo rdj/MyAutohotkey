@@ -32,11 +32,16 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Run this script elevated so it can control elevated windows
-#Include Elevate.ahk
-Elevate()
+;#Include Elevate.ahk
+;Elevate()
+
+;; I've gone to considerable effort to remove the requirement to run
+;; FFXIV mod stuff as administrator, so I'm going to stop running AHK
+;; elevated. That does mean that it won't be able to switch to terminal
+;; windows that are elevated, but that seems like a fine tradeoff.
 
 #Include ShellRun.ahk
-#Include Spotify.ahk
+;;#Include Spotify.ahk
 
 #KeyHistory 0
 ;;#KeyHistory 100
@@ -114,6 +119,7 @@ RdjIndexOf( ByRef a, needle ) {
 
 class RdjProgs {
     ACT               := "act"
+    APPLE_MUSIC       := "apple_music"
     BLIZZARD          := "blizzard"
     BLIZZARD_FRIENDS  := "blizzard_friends"
     CHATTY            := "chatty"
@@ -148,11 +154,32 @@ class RdjProgs {
     FIREFOX_OFFSET_X := - ( this.FIREFOX_OFFSET_W / 2 )
     FIREFOX_OFFSET_Y := -1
 
+    ;; To run a Windows Store app you need a special runTarget value
+    ;; which looks like:
+    ;;
+    ;;   runTarget: "shell:AppsFolder\PackageFamilyName!AppId"
+    ;;
+    ;; Finding the PackageFamilyName and AppId takes some digging.
+    ;;
+    ;; One option is just using Windows Explorer to create a shortcut
+    ;; and examining its properties, though you can't copy/paste the
+    ;; values and the PackageFamilyName has a long random id in it.
+    ;;
+    ;; So here's how to do it with powershell:
+    ;;
+    ;;   PS > Import-Module -SkipEditionCheck Appx
+    ;;   PS > $pkgname = Get-AppxPackage | Select Name | findstr Spotify
+    ;;   PS > $pkgfam = (Get-AppxPackage -Name $pkgname).PackageFamilyName
+    ;;   PS > $appid = (Get-AppxPackage -Name $pkgname | Get-AppxPackageManifest).package.applications.application.id[0]
+    ;;   PS > echo "ShellRun:AppsFolder\${pkgfam}!${appid}"
+    ;;   ShellRun:AppsFolder\SpotifyAB.SpotifyMusic_zpdnekdrzrea0!Spotify
+
     ;; This is a mess, but AHK's version of line continutation is
     ;; pretty funky and ill-suited to formatting this reasonably
     __New() {
 ;        this.ALL[this.ACT] := { title: "^Advanced Combat Tracker", exe: "Advanced Combat Tracker.exe", path: "%ProgramFiles32%\Advanced Combat Tracker\", admin: true, x: -1080 + this.CHROME_OFFSET_X, y: 743, w: 1080 + this.CHROME_OFFSET_W, h: 637 + this.CHROME_OFFSET_H }
-        this.ALL[this.ACT] := { title: "^Advanced Combat Tracker", exe: "Advanced Combat Tracker.exe", path: "%ProgramFiles32%\Advanced Combat Tracker\", x: -1080 + this.CHROME_OFFSET_X, y: 743, w: 1080 + this.CHROME_OFFSET_W, h: 637 + this.CHROME_OFFSET_H }
+        this.ALL[this.ACT] := { title: "^Advanced Combat Tracker", exe: "Advanced Combat Tracker.exe", path: "%ProgramFiles32%\Advanced Combat Tracker\", x: -1080 + this.CHROME_OFFSET_X, y: 840, w: 1080 + this.CHROME_OFFSET_W, h: 540 + this.CHROME_OFFSET_H }
+        this.ALL[this.APPLE_MUSIC] := { title: "Apple Music", exe: "AppleMusic.exe", runTarget: "shell:AppsFolder\AppleInc.AppleMusicWin_nzyj5cx40ttqa!App", x: -1080 + this.CHROME_OFFSET_X, y: 840, w: 1080 + this.CHROME_OFFSET_W, h: 540 + this.CHROME_OFFSET_H }
         this.ALL[this.BLIZZARD] := { title: "Blizzard Battle[.]net", exe: "Battle.net.exe", runTarget: "%ProgramFiles32%\Battle.net\Battle.net Launcher.exe", x: -1080, y: 743, w: 1080, h: 637 }
         this.ALL[this.BLIZZARD_FRIENDS] := { title: "Friends", exe: "Battle.net.exe", x: -320, y: 743, w: 320, h: 637 }
         this.ALL[this.CHROME] := { title: "^(?!FFXIV Crafting Optimizer)", exe: "chrome.exe", path: "%ProgramFiles32%\Google\Chrome\Application\", x: ( -1080 + this.CHROME_OFFSET_X ), y: 0, w: ( 1080 + this.CHROME_OFFSET_W ), h: ( 300 + 743 + this.CHROME_OFFSET_H ) } ; Chrome has like a phantom window that it insets the client window in
@@ -166,9 +193,9 @@ class RdjProgs {
         this.ALL[this.GIT_SHELL] := { exe: "mintty.exe", runTarget: "%AllUsersProfile%\Microsoft\Windows\Start Menu\Programs\Git\Git Bash.lnk" }
         this.ALL[this.ITUNES] := { exe: "iTunes.exe", path: "%ProgramFiles%\iTunes\", x: -1080, y: 743, w: 1080, h: 637 }
         this.ALL[this.OBS] := { exe: "obs64.exe", runTarget: "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\OBS Studio\OBS Studio (64bit).lnk", x: -1080 + this.CHROME_OFFSET_X, y: 843, w: 1080 + this.CHROME_OFFSET_W, h: 637 - 100 + this.CHROME_OFFSET_H }
-        this.ALL[this.ONEPASSWORD] := { exe: "1Password.exe", path: "%UserProfile%\AppData\Local\1Password\app\7\" }
+        this.ALL[this.ONEPASSWORD] := { exe: "1Password.exe", path: "%UserProfile%\AppData\Local\1Password\app\8\" }
         this.ALL[this.PANDORA] := { exe: "Pandora.exe", runTarget: "shell:AppsFolder\PandoraMediaInc.29680B314EFC2_n619g4d5j0fnw!App", x: ( -1080 + this.CHROME_OFFSET_X ), y: 0, w: ( 1080 + this.CHROME_OFFSET_W ), h: ( 743 + this.CHROME_OFFSET_H ) }
-        this.ALL[this.SPOTIFY] := { title: "^.", exe: "Spotify.exe", path: "%UserProfile%\AppData\Roaming\Spotify\", x: ( -1080 + this.CHROME_OFFSET_X ), y: 743 + 38, w: ( 1080 + this.CHROME_OFFSET_W - 8), h: ( 637 - 100 + this.CHROME_OFFSET_H ) }
+        this.ALL[this.SPOTIFY] := { title: "^.", exe: "Spotify.exe", runTarget: "shell:AppsFolder\SpotifyAB.SpotifyMusic_zpdnekdrzrea0!Spotify", x: ( -1080 + this.CHROME_OFFSET_X ), y: 743 + 38, w: ( 1080 + this.CHROME_OFFSET_W - 8), h: ( 637 - 100 + this.CHROME_OFFSET_H ) }
         this.ALL[this.STEAM] := { title: "Friends", exe: "steamwebhelper.exe", runTarget: "%ProgramFiles32%\Steam\Steam.exe", x: -1080, y: 743, w: 320, h: 637 }
         this.ALL[this.TEAMCRAFT] := { title: "^(?!FFXIV Teamcraft - Alarms overlay)", exe: "FFXIV Teamcraft.exe", path: "%LocalAppData%\ffxiv-teamcraft\", x: -1080 + this.CHROME_OFFSET_X, y: 743, w: 1080 + this.CHROME_OFFSET_W, h: 637 + this.CHROME_OFFSET_H  }
         ; runTarget: "%UserProfile%\TeamcraftNOUAC.cmd", hide: true
@@ -317,8 +344,8 @@ class FFKeyboardMode {
   #F10:: Send {Volume_Mute}
   #F11:: Send {Volume_Down}
   #F12:: Send {Volume_Up}
-  #PgUp:: spotifyKey("^{Up}")
-  #PgDn:: spotifyKey("^{Down}")
+  ;;#PgUp:: spotifyKey("^{Up}")
+  ;;#PgDn:: spotifyKey("^{Down}")
 
   #^1:: progs.RunOrActivate( progs.ONEPASSWORD )
   #^a:: progs.RunOrActivate( progs.ACT )
@@ -332,6 +359,7 @@ class FFKeyboardMode {
   #^l:: progs.RunOrActivate( progs.XIV_LAUNCHER )
   #^o:: progs.RunOrActivate( progs.OBS )
   #^p:: progs.RunOrActivate( progs.SPOTIFY )
+  #+p:: progs.RunOrActivate( progs.APPLE_MUSIC )
   #^q:: progs.RunOrActivate( progs.ACT )
   #^r:: progs.RepositionAll()
   #^s:: progs.RunOrActivate( progs.DISCORD )
@@ -390,7 +418,7 @@ class FFKeyboardMode {
 #If WinActive( BlackOps4 )
   ;; Physical LCtrl becomes CapsLock. CapsLock is still LCtrl.
   vkFF::CapsLock
-#If  
+#If
 
 #If WinActive( Witcher3 )
   vk07:: ; Xbox guide button
@@ -405,6 +433,7 @@ class FFKeyboardMode {
     SetKeyDelay 0
     SendRaw % FFPassword()
     Send {Tab}
+    SendRaw % FFCode()
     Return
 #If
 
@@ -419,54 +448,59 @@ class FFKeyboardMode {
   ~LWin:: RdjDisableStartMenu()
   ~RWin:: RdjDisableStartMenu()
 
-  ;; Physical LCtrl becomes Ctrl+Shift+Alt. CapsLock is still LCtrl.
-  vkFF::
-  *vkFF::
-    SetKeyDelay -1
-    Send {Blind}{Ctrl DownTemp}{Shift DownTemp}{Alt DownTemp}
-    Return
-  *vkFF up::
-    SetKeyDelay -1
-    Send {Blind}{Ctrl Up}{Shift Up}{Alt Up}
-    Return
+  ;; At one point I guess I had Ctrl+Shift+Alt shortcuts in FFXIV and
+  ;; had Left Control and the "Apps Key" sending that modifier. But I
+  ;; haven't had a keyboard with an Apps Key in ages, and I don't have
+  ;; any CSA bindings, so I'm commenting that all out.
 
-  *AppsKey::
-    SetKeyDelay -1
-    Send {Blind}{Ctrl DownTemp}{Shift DownTemp}{Alt DownTemp}
-    Return
-  *AppsKey up::
-    SetKeyDelay -1
-    Send {Blind}{Ctrl Up}{Shift Up}{Alt Up}
-    Return
+  ;; Physical LCtrl becomes Ctrl+Shift+Alt. CapsLock is still LCtrl.
+  ; vkFF::
+  ; *vkFF::
+  ;   SetKeyDelay -1
+  ;   Send {Blind}{Ctrl DownTemp}{Shift DownTemp}{Alt DownTemp}
+  ;   Return
+  ; *vkFF up::
+  ;   SetKeyDelay -1
+  ;   Send {Blind}{Ctrl Up}{Shift Up}{Alt Up}
+  ;   Return
+
+  ; *AppsKey::
+  ;   SetKeyDelay -1
+  ;   Send {Blind}{Ctrl DownTemp}{Shift DownTemp}{Alt DownTemp}
+  ;   Return
+  ; *AppsKey up::
+  ;   SetKeyDelay -1
+  ;   Send {Blind}{Ctrl Up}{Shift Up}{Alt Up}
+  ;   Return
 
   ;; Sometimes I hit Tab to try to switch targets in game while I have
   ;; my AppsKey modifier down, so we don't want that switching programs
-  ^!+Tab:: Send {Tab}
-  
+  ;; ^!+Tab:: Send {Tab}
+
   #f1:: Send {numpadAdd}
   #q:: Send {numpad7}
   #w:: Send {numpad8}
   #e:: Send {numpad9}
-  
+
   #a:: Send {numpad4}
   #s:: Send {numpad2}
   #d:: Send {numpad6}
   #f:: Send {numpad0}
-  
+
   #z:: Send {numpad1}
   #x:: Send {numpadDot}
   #c:: Send {numpad3}
   #v:: Send {numpadMult}
-  
+
   #^q:: Send ^{numpad7}
   #^w:: Send ^{numpad8}
   #^e:: Send ^{numpad9}
-  
+
   #^a:: Send ^{numpad4}
   #^s:: Send ^{numpad2}
   #^d:: Send ^{numpad6}
   #^f:: Send {numpad0}
-  
+
   #^z:: Send ^{numpad1}
   #^x:: Send {numpadDot}
   #^c:: Send ^{numpad3}
@@ -474,7 +508,7 @@ class FFKeyboardMode {
 
   #Down:: Send {Media_Play_Pause}
   #Up:: Send {Media_Next}
-  #Right:: Send !{F2} ; Mutes in-game audio
+  ;; #Right:: Send !{F2} ; Mutes in-game audio
 
   #Space:: ffKeyboardMode.Cycle()
 
@@ -482,6 +516,7 @@ class FFKeyboardMode {
   #2:: SendRaw 
   #3:: SendRaw 
   #n:: SendRaw ñ
+  #=:: SendRaw ⇔
 #If
 
 #If WinActive( FFXIV ) && ffKeyboardMode.IsFishing
@@ -492,12 +527,12 @@ class FFKeyboardMode {
   q:: Send {numpad7}
   w:: Send {numpad8}
   e:: Send {numpad9}
-  
+
   a:: Send {numpad4}
   s:: Send {numpad2}
   d:: Send {numpad6}
   f:: Send {numpad0}
-  
+
   z:: Send {numpad1}
   x:: Send {numpadDot}
   c:: Send {numpad3}
